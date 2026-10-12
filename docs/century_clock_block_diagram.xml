@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="21.0.0" type="device">
+  <diagram name="Century_Clock_IEEE_Block_Diagram" id="ieee_diag">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="880" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="top_box" value="&lt;b&gt;century_clock_top&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;9&quot; color=&quot;#444444&quot;&gt;(DE2-115 Top-Level Entity)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.5;dashed=1;dashPattern=6 4;fillColor=#FAFAFA;fontFamily=Helvetica;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="150" y="40" width="1100" height="770" as="geometry" />
+        </mxCell>
+        <mxCell id="in_clk" value="&lt;b&gt;CLOCK_50&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;8&quot;&gt;50 MHz (PIN_Y2)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.2;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="95" width="95" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="in_rst" value="&lt;b&gt;KEY[3]&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;8&quot;&gt;rst_n (PIN_R24)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.2;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="160" width="95" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="in_key" value="&lt;b&gt;KEY[2:0]&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;8&quot;&gt;Pushbuttons&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.2;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="420" width="95" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="in_sw" value="&lt;b&gt;SW[1:0]&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;8&quot;&gt;Slide Switches&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.2;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="650" width="95" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="u_clk_div" value="&lt;b&gt;clk_div&lt;/b&gt;&lt;br/&gt;&lt;hr style=&quot;border:0.5px solid #000;&quot;/&gt;&lt;font size=&quot;9&quot;&gt;&lt;b&gt;50 MHz Prescaler&lt;/b&gt;&lt;br/&gt;• 1s Tick Generator&lt;br/&gt;• 2Hz Blink Generator&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=11;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="190" y="80" width="170" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u_btn" value="&lt;b&gt;button_filter (x3)&lt;/b&gt;&lt;br/&gt;&lt;hr style=&quot;border:0.5px solid #000;&quot;/&gt;&lt;font size=&quot;9&quot;&gt;&lt;b&gt;Debounce &amp; Pulse&lt;/b&gt;&lt;br/&gt;• Active-Low Inverter&lt;br/&gt;• 2-Stage D-FF Sync&lt;br/&gt;• 20ms Integrator Filter&lt;br/&gt;• 1-Cycle Pulse Detect&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=11;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="190" y="370" width="170" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="u_core" value="&lt;b&gt;clock_core&lt;/b&gt;&lt;br/&gt;&lt;hr style=&quot;border:0.5px solid #000;&quot;/&gt;&lt;br/&gt;&lt;font size=&quot;9&quot;&gt;&lt;b&gt;[ FSM Controller ]&lt;/b&gt;&lt;br/&gt;S_RUN | S_SET_HOUR | S_SET_MIN&lt;br/&gt;S_SET_SEC | S_SET_DAY | S_SET_MONTH | S_SET_YEAR&lt;br/&gt;&lt;br/&gt;&lt;b&gt;[ Synchronous RTC Counters ]&lt;/b&gt;&lt;br/&gt;• sec [5:0] (0..59)&lt;br/&gt;• min [5:0] (0..59)&lt;br/&gt;• hour [4:0] (0..23)&lt;br/&gt;• day [4:0] (1..max_day)&lt;br/&gt;• month [3:0] (1..12)&lt;br/&gt;• year [13:0] (0..9999)&lt;br/&gt;&lt;br/&gt;&lt;b&gt;[ Century Calendar Engine ]&lt;/b&gt;&lt;br/&gt;• Leap Year Logic: ((Y%4==0 &amp;&amp; Y%100!=0) || Y%400==0)&lt;br/&gt;• Dynamic max_day (28/29/30/31)&lt;br/&gt;• Auto-Clamp Day on Month Transition&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=11;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="450" y="80" width="240" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="u_disp" value="&lt;b&gt;display_controller&lt;/b&gt;&lt;br/&gt;&lt;hr style=&quot;border:0.5px solid #000;&quot;/&gt;&lt;br/&gt;&lt;font size=&quot;9&quot;&gt;&lt;b&gt;[ BCD Nibble Slicing ]&lt;/b&gt;&lt;br/&gt;Tens = Value / 10&lt;br/&gt;Ones = Value % 10&lt;br/&gt;&lt;br/&gt;&lt;b&gt;[ Display Multiplexer ]&lt;/b&gt;&lt;br/&gt;• SW[1]=0: Time (HH:MM:SS:--)&lt;br/&gt;• SW[1]=1: Date (DD:MM:YYYY)&lt;br/&gt;&lt;br/&gt;&lt;b&gt;[ Blinking Controller ]&lt;/b&gt;&lt;br/&gt;• Masks active setting field&lt;br/&gt;  with 4&amp;apos;hF (Blank) at 2 Hz&lt;br/&gt;  during SET Mode (SW[0]=1)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=11;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="780" y="80" width="220" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="u_dec" value="&lt;b&gt;seg7_decoder (x8)&lt;/b&gt;&lt;br/&gt;&lt;hr style=&quot;border:0.5px solid #000;&quot;/&gt;&lt;font size=&quot;9&quot;&gt;&lt;b&gt;u_hex7 .. u_hex0&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;4-bit BCD to 7-Segment&lt;br/&gt;Active-Low Truth Table&lt;br/&gt;(0: ON, 1: OFF)&lt;br/&gt;&lt;br/&gt;4&amp;apos;hF: All Segments OFF&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=11;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="310" width="150" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="out_hex" value="&lt;b&gt;8x 7-Segment&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;8&quot;&gt;HEX7 .. HEX0&lt;br/&gt;Displays&lt;br/&gt;(Altera DE2-115)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;strokeWidth=1.2;fillColor=#FFFFFF;fontFamily=Helvetica;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="340" width="110" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="e_clk" value="CLOCK_50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.2;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="in_clk" target="u_clk_div">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_rst" value="KEY[3] (rst_n)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.2;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="in_rst" target="u_clk_div">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_key_in" value="KEY[2:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="in_key" target="u_btn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_key" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="143" y="435" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_key_lbl" value="3" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="138" y="424" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_tick_1s" value="tick_1s" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.2;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="130" />
+              <mxPoint x="450" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_blink" value="blink (2Hz)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.2;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="190" />
+              <mxPoint x="405" y="190" />
+              <mxPoint x="405" y="55" />
+              <mxPoint x="750" y="55" />
+              <mxPoint x="750" y="130" />
+              <mxPoint x="780" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_btn_chg" value="key_change" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.2;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="395" />
+              <mxPoint x="450" y="395" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_btn_up" value="key_up" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.2;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="445" />
+              <mxPoint x="450" y="445" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_btn_dn" value="key_down" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.2;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="495" />
+              <mxPoint x="450" y="495" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sw_core" value="SW[1:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="in_sw">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="115" y="672" />
+              <mxPoint x="450" y="672" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_sw_core" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="273" y="665" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_sw_core_lbl" value="2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="268" y="654" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sw_disp" value="SW[1:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="672" />
+              <mxPoint x="720" y="672" />
+              <mxPoint x="720" y="672" />
+              <mxPoint x="780" y="672" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_sw_disp" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="738" y="665" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_sw_disp_lbl" value="2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="733" y="654" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bus_state" value="state [2:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="180" />
+              <mxPoint x="780" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_state" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="728" y="173" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_state_lbl" value="3" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="723" y="162" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bus_sec" value="sec [5:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="245" />
+              <mxPoint x="780" y="245" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_sec" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="728" y="238" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_sec_lbl" value="6" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="723" y="227" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bus_min" value="min [5:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="310" />
+              <mxPoint x="780" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_min" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="728" y="303" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_min_lbl" value="6" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="723" y="292" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bus_hour" value="hour [4:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="375" />
+              <mxPoint x="780" y="375" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_hour" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="728" y="368" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_hour_lbl" value="5" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="723" y="357" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bus_day" value="day [4:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="440" />
+              <mxPoint x="780" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_day" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="728" y="433" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_day_lbl" value="5" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="723" y="422" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bus_month" value="month [3:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="505" />
+              <mxPoint x="780" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_month" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="728" y="498" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_month_lbl" value="4" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="723" y="487" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bus_year" value="year [13:0]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="570" />
+              <mxPoint x="780" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_year" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="728" y="563" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_year_lbl" value="14" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="723" y="552" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bcd_bus" value="d7..d0 [3:0] (x8)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="410" />
+              <mxPoint x="1080" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sl_bcd" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="1033" y="403" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_bcd_lbl" value="4 (x8)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1028" y="392" width="24" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="e_hex_bus" value="HEX7..HEX0 [6:0] (x8)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=2.0;endArrow=block;endFill=1;endSize=6;fontFamily=Helvetica;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="u_dec" target="out_hex">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_hex" value="" style="shape=line;strokeWidth=1.8;strokeColor=#000000;rotation=65;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="1253" y="403" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="sl_hex_lbl" value="7 (x8)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="1248" y="392" width="24" height="12" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
