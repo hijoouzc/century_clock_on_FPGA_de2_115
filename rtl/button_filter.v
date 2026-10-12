@@ -3,25 +3,24 @@ module button_filter #(
 )(
     input  wire clk,
     input  wire rst_n,
-    input  wire btn_in,     // Active-low tu kit DE2-115
-    output reg  btn_pulse   // Xung tich cuc cao 1 chu ky khi nhan nut
+    input  wire btn_in,     // Active-low from DE2-115 pushbutton
+    output reg  btn_pulse   // Single-cycle high pulse on press
 );
-    // Gioi han dem khu rung 20ms tai 50MHz
-    localparam LIMIT = SIM_MODE ? 20'd5 : 20'd1_000_000;
+    localparam LIMIT = SIM_MODE ? 20'd5 : 20'd1_000_000; // 20ms at 50MHz
 
-    // Dong bo 2 tang FF & dao muc tich cuc
+    // 2-stage synchronizer with active-low inversion
     reg sync0, sync1;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             sync0 <= 1'b0;
             sync1 <= 1'b0;
         end else begin
-            sync0 <= ~btn_in; // Nhan = 1, Nha = 0
+            sync0 <= ~btn_in; // Invert: pressed=1, released=0
             sync1 <= sync0;
         end
     end
 
-    // Bo dem loc rung
+    // Debounce counter
     reg [19:0] cnt;
     reg btn_state;
     always @(posedge clk or negedge rst_n) begin
@@ -40,7 +39,7 @@ module button_filter #(
         end
     end
 
-    // Bat suon len tao 1 xung duy nhat
+    // Rising edge detector: generate single-cycle pulse
     reg btn_state_d;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

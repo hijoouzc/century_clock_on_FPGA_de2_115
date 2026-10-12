@@ -1,6 +1,6 @@
 module seg7_decoder (
     input  wire [3:0] bcd,
-    output reg  [6:0] seg // [6:0] = {g, f, e, d, c, b, a}, Active-Low cho DE2-115
+    output reg  [6:0] seg // [6:0] = {g,f,e,d,c,b,a}, Active-Low for DE2-115
 );
     always @(*) begin
         case (bcd)
@@ -14,12 +14,7 @@ module seg7_decoder (
             4'h7: seg = 7'b111_1000;
             4'h8: seg = 7'b000_0000;
             4'h9: seg = 7'b001_0000;
-            4'hA: seg = 7'b000_1000;
-            4'hB: seg = 7'b000_0011;
-            4'hC: seg = 7'b100_0110;
-            4'hD: seg = 7'b010_0001;
-            4'hE: seg = 7'b011_1111; // Dấu '-'
-            default: seg = 7'b111_1111; // Tắt hết
+            default: seg = 7'b111_1111; // All segments OFF
         endcase
     end
 endmodule

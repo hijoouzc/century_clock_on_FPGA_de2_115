@@ -2,15 +2,15 @@
 module display_controller (
     input  wire        sw_mode,     // 0: RUN, 1: SET
     input  wire        sw_display,  // 0: TIME, 1: DATE
-    input  wire [2:0]  state,       // Trang thai FSM
-    input  wire        blink,       // Xung nhap nhay
+    input  wire [2:0]  state,       // FSM state
+    input  wire        blink,       // 2 Hz blink signal
     input  wire [5:0]  sec,
     input  wire [5:0]  min,
     input  wire [4:0]  hour,
     input  wire [4:0]  day,
     input  wire [3:0]  month,
     input  wire [13:0] year,
-    output reg  [3:0]  d7, d6, d5, d4, d3, d2, d1, d0 // Ma 4-bit BCD cho HEX7..HEX0
+    output reg  [3:0]  d7, d6, d5, d4, d3, d2, d1, d0 // BCD for HEX7..HEX0
 );
     localparam S_SET_HOUR  = 3'd1;
     localparam S_SET_MIN   = 3'd2;
@@ -18,9 +18,9 @@ module display_controller (
     localparam S_SET_DAY   = 3'd4;
     localparam S_SET_MONTH = 3'd5;
     localparam S_SET_YEAR  = 3'd6;
-    localparam BLANK       = 4'hF; // Ma tat LED
+    localparam BLANK       = 4'hF; // Turns off all LED segments
 
-    // Tach cac chu so hien thi
+    // BCD digit extraction
     wire [3:0] sec_tens   = sec / 10;
     wire [3:0] sec_ones   = sec % 10;
     wire [3:0] min_tens   = min / 10;
@@ -39,17 +39,13 @@ module display_controller (
 
     always @(*) begin
         if (!sw_display) begin
-            // Hien thi Gio: HH-MM-SS (HEX7..HEX2, HEX1-HEX0 tat)
-            d7 = hour_tens;
-            d6 = hour_ones;
-            d5 = min_tens;
-            d4 = min_ones;
-            d3 = sec_tens;
-            d2 = sec_ones;
-            d1 = BLANK;
-            d0 = BLANK;
+            // Time display: HH:MM:SS (HEX7..HEX2), HEX1-HEX0 off
+            d7 = hour_tens;  d6 = hour_ones;
+            d5 = min_tens;   d4 = min_ones;
+            d3 = sec_tens;   d2 = sec_ones;
+            d1 = BLANK;      d0 = BLANK;
 
-            // Nhap nhay truong dang chinh trong SET mode
+            // Blink active field in SET mode
             if (sw_mode && !blink) begin
                 case (state)
                     S_SET_HOUR: begin d7 = BLANK; d6 = BLANK; end
@@ -59,17 +55,13 @@ module display_controller (
                 endcase
             end
         end else begin
-            // Hien thi Ngay: DD-MM-YYYY (HEX7..HEX0)
-            d7 = day_tens;
-            d6 = day_ones;
-            d5 = month_tens;
-            d4 = month_ones;
-            d3 = year_thou;
-            d2 = year_hund;
-            d1 = year_tens;
-            d0 = year_ones;
+            // Date display: DD:MM:YYYY (HEX7..HEX0)
+            d7 = day_tens;    d6 = day_ones;
+            d5 = month_tens;  d4 = month_ones;
+            d3 = year_thou;   d2 = year_hund;
+            d1 = year_tens;   d0 = year_ones;
 
-            // Nhap nhay truong dang chinh trong SET mode
+            // Blink active field in SET mode
             if (sw_mode && !blink) begin
                 case (state)
                     S_SET_DAY:   begin d7 = BLANK; d6 = BLANK; end

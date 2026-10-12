@@ -3,17 +3,16 @@ module clk_div #(
 )(
     input  wire clk,
     input  wire rst_n,
-    output reg  tick_1s,
-    output reg  blink
+    output reg  tick_1s,  // 1-cycle pulse every 1 second
+    output reg  blink     // 2 Hz toggle for blinking display
 );
-    // Tao xung tick 1 giay va xung nhap nhay 2Hz
     localparam CNT_1S_MAX    = SIM_MODE ? 32'd10 : 32'd50_000_000;
     localparam CNT_BLINK_MAX = SIM_MODE ? 32'd5  : 32'd12_500_000;
 
     reg [31:0] cnt_1s;
     reg [31:0] cnt_blink;
 
-    // Tao xung tick_1s (rong 1 chu ky clock)
+    // Generate 1-second tick pulse
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             cnt_1s  <= 32'd0;
@@ -27,7 +26,7 @@ module clk_div #(
         end
     end
 
-    // Tao tin hieu blink 2Hz (dao trang thai moi 0.25s)
+    // Generate 2 Hz blink signal
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             cnt_blink <= 32'd0;

@@ -11,9 +11,9 @@ module clock_core #(
     input  wire        tick_1s,
     input  wire        sw_mode,     // 0: RUN, 1: SET
     input  wire        sw_display,  // 0: TIME, 1: DATE
-    input  wire        key_change,  // Chuyen truong
-    input  wire        key_up,      // Tang
-    input  wire        key_down,    // Giam
+    input  wire        key_change,  // Cycle through fields
+    input  wire        key_up,      // Increment value
+    input  wire        key_down,    // Decrement value
     output reg  [5:0]  sec,
     output reg  [5:0]  min,
     output reg  [4:0]  hour,
@@ -22,7 +22,7 @@ module clock_core #(
     output reg  [13:0] year,
     output reg  [2:0]  state
 );
-    // Dinh nghia cac trang thai FSM
+    // FSM state definitions
     localparam S_RUN       = 3'd0;
     localparam S_SET_HOUR  = 3'd1;
     localparam S_SET_MIN   = 3'd2;
@@ -31,7 +31,7 @@ module clock_core #(
     localparam S_SET_MONTH = 3'd5;
     localparam S_SET_YEAR  = 3'd6;
 
-    // FSM chuyen trang thai cai dat
+    // FSM state transitions
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state <= S_RUN;
@@ -51,7 +51,7 @@ module clock_core #(
                     default:     state <= sw_display ? S_SET_DAY : S_SET_HOUR;
                 endcase
             end else begin
-                // Tu dong chuyen nhom khi gat cong tac sw_display
+                // Auto-switch group when display toggle changes
                 if (!sw_display && (state == S_SET_DAY || state == S_SET_MONTH || state == S_SET_YEAR))
                     state <= S_SET_HOUR;
                 else if (sw_display && (state == S_SET_HOUR || state == S_SET_MIN || state == S_SET_SEC))
@@ -60,10 +60,10 @@ module clock_core #(
         end
     end
 
-    // Kiem tra nam nhuan: chia het cho 4 nhung khong chia het cho 100, hoac chia het cho 400
+    // Leap year detection
     wire is_leap = ((year[1:0] == 2'b00) && (year % 100 != 0)) || (year % 400 == 0);
 
-    // Xac dinh so ngay toi da trong thang
+    // Maximum day in current month
     reg [4:0] max_day;
     always @(*) begin
         case (month)
@@ -73,7 +73,7 @@ module clock_core #(
         endcase
     end
 
-    // Logic dem thoi gian va chinh sua
+    // Time/date counting and setting logic
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             sec   <= INIT_SEC;
@@ -83,7 +83,7 @@ module clock_core #(
             month <= INIT_MONTH;
             year  <= INIT_YEAR;
         end else if (!sw_mode) begin
-            // Che do chay binh thuong (RUN)
+            // RUN mode: auto-increment time chain
             if (tick_1s) begin
                 if (sec == 6'd59) begin
                     sec <= 6'd0;
@@ -113,7 +113,7 @@ module clock_core #(
                 end
             end
         end else begin
-            // Che do cai dat (SET)
+            // SET mode: manual adjustment with wrap-around
             if (key_up) begin
                 case (state)
                     S_SET_SEC:   sec   <= (sec == 6'd59) ? 6'd0 : sec + 1'b1;
@@ -136,7 +136,7 @@ module clock_core #(
                 endcase
             end
 
-            // Tu dong kep ngay hop le neu doi thang/nam lam day > max_day
+            // Auto-clamp day when month/year change makes day invalid
             if (day > max_day) begin
                 day <= max_day;
             end
