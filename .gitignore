@@ -1,0 +1,24 @@
+# Simulation artifacts
+*.vcd
+obj_dir/
+*.log
+
+# Quartus compilation files
+db/
+incremental_db/
+output_files/
+simulation/
+*.rpt
+*.smsg
+*.summary
+*.done
+*.jdi
+*.pin
+*.sof
+*.pof
+*.qws
+
+# Editor backups
+*~
+*.bak
+*.orig
