@@ -12,8 +12,8 @@
 | Tính năng | Mô tả |
 | :--- | :--- |
 | Đếm thời gian | Giây → Phút → Giờ → Ngày → Tháng → Năm (tự động nối tiếp) |
-| Phạm vi năm | 2000 – 9999 (quay vòng) |
-| Năm nhuận | Đúng quy tắc Gregorian: `((Y%4==0 && Y%100!=0) \|\| Y%400==0)` |
+| Phạm vi năm | 2000 – 2099 (1 thế kỷ, quay vòng) |
+| Năm nhuận | Tối ưu phần cứng 2000–2099: `year[1:0] == 2'b00` (không tốn bộ chia) |
 | Chỉnh giờ/ngày | Tăng/giảm quay vòng, tự động kẹp ngày hợp lệ khi đổi tháng |
 | Hiển thị | 8 LED 7 đoạn: chế độ Giờ (`HH:MM:SS`) hoặc Ngày (`DD:MM:YYYY`) |
 | Nhấp nháy | Trường đang chỉnh nhấp nháy 2 Hz trong chế độ cài đặt |
@@ -144,7 +144,7 @@ CLOCK_50  ─────┬──────┬──────┬───�
 | `S_SET_SEC` | `3'd3` | Chỉnh giây (0–59) |
 | `S_SET_DAY` | `3'd4` | Chỉnh ngày (1–max_day) |
 | `S_SET_MONTH` | `3'd5` | Chỉnh tháng (1–12) |
-| `S_SET_YEAR` | `3'd6` | Chỉnh năm (2000–9999) |
+| `S_SET_YEAR` | `3'd6` | Chỉnh năm (2000–2099) |
 
 ### 4.3. Chuỗi Đếm Thời Gian (RTC Chain)
 
@@ -161,16 +161,22 @@ sec++ ──(sec==59)──→ min++ ──(min==59)──→ hour++ ──(hour
 
 ### 4.4. Thuật Toán Năm Nhuận (Leap Year)
 
+Trong phạm vi 1 thế kỷ (2000 – 2099):
+- Năm 2000 chia hết cho 400 nên là năm nhuận.
+- Các năm từ 2001 đến 2099 không có năm nào tròn 100 (năm tròn 100 kế tiếp là 2100).
+- Do đó, mọi năm chia hết cho 4 trong thế kỷ này đều là năm nhuận 100%.
+
 ```verilog
-is_leap = ((year[1:0] == 2'b00) && (year % 100 != 0)) || (year % 400 == 0);
+// Tối ưu hóa: chỉ cần kiểm tra 2 bit LSB, loại bỏ hoàn toàn bộ chia modulo (tiết kiệm ~120 LEs)
+wire is_leap = (year[1:0] == 2'b00);
 ```
 
-| Năm | `Y%4==0` | `Y%100==0` | `Y%400==0` | Kết quả |
-| :---: | :---: | :---: | :---: | :---: |
-| 2024 | ✓ | ✗ | ✗ | **Nhuận** ✓ |
-| 1900 | ✓ | ✓ | ✗ | Không nhuận ✗ |
-| 2000 | ✓ | ✓ | ✓ | **Nhuận** ✓ |
-| 2025 | ✗ | ✗ | ✗ | Không nhuận ✗ |
+| Năm | `year[1:0] == 2'b00` | Kết quả | Ghi chú |
+| :---: | :---: | :---: | :--- |
+| 2000 | `2'b00` (✓) | **Nhuận** ✓ | Năm thế kỷ chia hết cho 400 |
+| 2024 | `2'b00` (✓) | **Nhuận** ✓ | Chia hết cho 4 |
+| 2025 | `2'b01` (✗) | Không nhuận ✗ | Năm lẻ |
+| 2096 | `2'b00` (✓) | **Nhuận** ✓ | Chia hết cho 4 |
 
 ### 4.5. Bảng Số Ngày Tối Đa Trong Tháng
 
@@ -304,6 +310,6 @@ ALL TESTCASES SIMULATED SUCCESSFULLY!
 | `hour[4:0]` | 5 bit | `clock_core` | `display_controller` | Giờ (0–23) |
 | `day[4:0]` | 5 bit | `clock_core` | `display_controller` | Ngày (1–31) |
 | `month[3:0]` | 4 bit | `clock_core` | `display_controller` | Tháng (1–12) |
-| `year[13:0]` | 14 bit | `clock_core` | `display_controller` | Năm (0–9999) |
+| `year[13:0]` | 14 bit | `clock_core` | `display_controller` | Năm (2000–2099) |
 | `d7..d0[3:0]` | 4 bit × 8 | `display_controller` | `seg7_decoder` | Mã BCD cho 8 LED |
 | `HEX7..HEX0[6:0]` | 7 bit × 8 | `seg7_decoder` | Chân ra DE2-115 | Điều khiển LED 7 đoạn |
