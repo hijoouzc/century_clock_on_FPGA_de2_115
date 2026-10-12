@@ -60,8 +60,8 @@ module clock_core #(
         end
     end
 
-    // Leap year detection
-    wire is_leap = ((year[1:0] == 2'b00) && (year % 100 != 0)) || (year % 400 == 0);
+    // Leap year detection (2000-2099: any year divisible by 4 is a leap year)
+    wire is_leap = (year[1:0] == 2'b00);
 
     // Maximum day in current month
     reg [4:0] max_day;
@@ -95,7 +95,7 @@ module clock_core #(
                                 day <= 5'd1;
                                 if (month == 4'd12) begin
                                     month <= 4'd1;
-                                    year  <= (year == 14'd9999) ? 14'd2000 : year + 1'b1;
+                                    year  <= (year == 14'd2099) ? 14'd2000 : year + 1'b1;
                                 end else begin
                                     month <= month + 1'b1;
                                 end
@@ -121,7 +121,7 @@ module clock_core #(
                     S_SET_HOUR:  hour  <= (hour == 5'd23) ? 5'd0 : hour + 1'b1;
                     S_SET_DAY:   day   <= (day >= max_day) ? 5'd1 : day + 1'b1;
                     S_SET_MONTH: month <= (month == 4'd12) ? 4'd1 : month + 1'b1;
-                    S_SET_YEAR:  year  <= (year == 14'd9999) ? 14'd2000 : year + 1'b1;
+                    S_SET_YEAR:  year  <= (year == 14'd2099) ? 14'd2000 : year + 1'b1;
                     default: ;
                 endcase
             end else if (key_down) begin
@@ -131,7 +131,7 @@ module clock_core #(
                     S_SET_HOUR:  hour  <= (hour == 5'd0) ? 5'd23 : hour - 1'b1;
                     S_SET_DAY:   day   <= (day <= 5'd1) ? max_day : day - 1'b1;
                     S_SET_MONTH: month <= (month <= 4'd1) ? 4'd12 : month - 1'b1;
-                    S_SET_YEAR:  year  <= (year <= 14'd2000) ? 14'd9999 : year - 1'b1;
+                    S_SET_YEAR:  year  <= (year <= 14'd2000) ? 14'd2099 : year - 1'b1;
                     default: ;
                 endcase
             end
