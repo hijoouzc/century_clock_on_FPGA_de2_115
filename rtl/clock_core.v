@@ -62,7 +62,7 @@ module clock_core #(
 
     // Leap year detection (2000-2099: any year divisible by 4 is a leap year)
     wire is_leap = (year[1:0] == 2'b00);
-
+    
     // Maximum day in current month
     reg [4:0] max_day;
     always @(*) begin
